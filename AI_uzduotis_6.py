@@ -1,29 +1,44 @@
 import os
+from dotenv import load_dotenv
 from openai import OpenAI
 
+load_dotenv()
 token = os.environ["PASLAPTELE"]
+
 endpoint = "https://models.github.ai/inference"
-model = "openai/gpt-4.1"
+model = "openai/gpt-4.1" 
 
 client = OpenAI(
     base_url=endpoint,
     api_key=token,
 )
-
-response = client.chat.completions.create(
-    messages=[
+messages = [
         {
             "role": "system",
-            "content": "",
+            "content": "Atsakyk visada lietuviškai."
         },
+    ]
+
+while True:
+    user_input = input("Įveskite klasimuką (jei norite išeiti įveskite 'exit'): ")
+    if user_input.lower() == "exit":
+        print("Ciao!")
+        break
+    
+    messages.append(
         {
             "role": "user",
-            "content": "What is the capital of France?",
+            "content": user_input
         }
-    ],
-    temperature=1,
-    top_p=1,
-    model=model
-)
+    )
+    
+    response = client.chat.completions.create(
+       messages=messages,
+       temperature=1,
+        top_p=1,
+       model=model,
+       )
+    
 
-print(response.choices[0].message.content)
+    print(response.choices[0].message.content)
+    
